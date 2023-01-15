@@ -19,5 +19,7 @@ for i in range(NUM_NEWS_PER_PAGE):
 
     second_row = rows[i * 3 + 1]
 
-    score = int(second_row.find('span', class_='score').text.split(" ")[0])
+    score_span = second_row.find('span', class_='score')
+    score = int(score_span.text.split(" ")[0]) if score_span else None
+
     age = datetime.fromisoformat(second_row.find('span', class_='age')['title'])
