@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+from post import Post
 
 URL = "https://news.ycombinator.com/"
 NUM_NEWS_PER_PAGE = 30
@@ -20,6 +21,7 @@ for i in range(NUM_NEWS_PER_PAGE):
     second_row = rows[i * 3 + 1]
 
     score_span = second_row.find('span', class_='score')
-    score = int(score_span.text.split(" ")[0]) if score_span else None
+    score = int(score_span.text.split(" ")[0]) if score_span else -1 # TODO: Handle posts without score (i.e. -1)
 
-    age = datetime.fromisoformat(second_row.find('span', class_='age')['title'])
+    date = datetime.fromisoformat(second_row.find('span', class_='age')['title'])
+    post = Post(title, url, score, date)
