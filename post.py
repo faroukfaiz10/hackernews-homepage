@@ -16,3 +16,9 @@ class Post:
         now = datetime.now()
         diff = now - self.date
         return diff > timedelta(days=1)
+
+    def __str__(self) -> str:
+        if self.score == -1:
+            return f"NOT_SCORED - {self.title} - {self.url}"
+
+        return f"{self.score} - {self.title} - {self.url}"
