@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from post import Post
 from typing import Any
 
-URL = "https://news.ycombinator.com/"
+URL_PREFIX = "https://news.ycombinator.com/news?p="
 NUM_NEWS_PER_PAGE = 30
 
 def get_age_in_hours(age: str) -> int:
@@ -51,23 +51,27 @@ def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
 def print_posts(posts: 'list[Post]'):
     print(*posts, sep="\n")
 
-def main():
-    page = requests.get(URL)
+def fetch_page_posts(page_index: int) -> 'list[Post]':
+    page = requests.get(f"{URL_PREFIX}{page_index}")
 
     soup = BeautifulSoup(page.content, "html.parser")
     table = soup.find_all('table')[2]
     rows = table.find_all('tr')
     
-    posts = [parse_post(rows, i) for i in range(NUM_NEWS_PER_PAGE)]
-    posts_without_score = list(filter(lambda p: p.score == -1, posts))
-    posts.sort(key=Post.get_normalized_score, reverse= True)
+    return [parse_post(rows, i) for i in range(NUM_NEWS_PER_PAGE)]
+
+def main():
+    posts = [fetch_page_posts(i) for i in [1, 2, 3]]
+    flattened_posts = [post for page_posts in posts for post in page_posts]
+    posts_without_score = list(filter(lambda p: p.score == -1, flattened_posts))
+    flattened_posts.sort(key=Post.get_normalized_score, reverse= True)
 
     if len(posts_without_score):
         print("Posts without score:")
         print_posts(posts_without_score)
         print("\nPosts with score:")
 
-    print_posts(posts[:10])
+    print_posts(flattened_posts[:10])
 
 if __name__ == "__main__":
     main()
