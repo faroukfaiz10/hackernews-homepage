@@ -1,21 +1,9 @@
-from datetime import datetime, timedelta
-
 class Post:
-    def __init__(self, title: str, url: str, score: int, date: datetime):
+    def __init__(self, title: str, url: str, score: int, age_in_hours: int):
         self.title = title
         self.url = url
         self.score = score
-        self.date = date
-
-    """
-        Warning: Sometimes, date is not correct. E.g.
-        Date is "2023-01-14T08:52:23" when queried on 2023-01-15T20:11:23 but shows "1 hour ago".
-        Assuming the Date is the one that's wrong because of number of the low score (6).
-    """
-    def is_posted_in_last_day(self):
-        now = datetime.now()
-        diff = now - self.date
-        return diff > timedelta(days=1)
+        self.age_in_hours = age_in_hours
 
     def __str__(self) -> str:
         if self.score == -1:
