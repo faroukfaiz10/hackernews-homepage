@@ -55,7 +55,7 @@ def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
     
 posts = [parse_post(rows, i) for i in range(NUM_NEWS_PER_PAGE)]
 posts_without_score = list(filter(lambda p: p.score == -1, posts))
-posts.sort(key=lambda p: p.score, reverse= True)
+posts.sort(key=Post.get_normalized_score, reverse= True)
 
 if len(posts_without_score):
     print("Posts without score:")
