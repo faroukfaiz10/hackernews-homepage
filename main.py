@@ -29,12 +29,19 @@ def get_age_in_hours(age: str) -> int:
         return int(age.split(" ")[0]) + 1
     raise ValueError(f"Unsupported time_unit in age: {age}")
 
+def format_url(link: str) -> str:
+    if link.startswith("item?id="):
+        # URLs to YC pages are relative
+        return f"https://news.ycombinator.com/{link}"
+    return link
+
+
 def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
     first_row = rows[index * 3]
 
     link = first_row.find_all('td')[2].a
     title = link.text
-    url = link['href']
+    url = format_url(link['href'])
 
     second_row = rows[index * 3 + 1]
 
