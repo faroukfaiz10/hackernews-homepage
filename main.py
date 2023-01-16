@@ -5,12 +5,6 @@ from typing import Any
 
 URL = "https://news.ycombinator.com/"
 NUM_NEWS_PER_PAGE = 30
-page = requests.get(URL)
-
-soup = BeautifulSoup(page.content, "html.parser")
-table = soup.find_all('table')[2]
-rows = table.find_all('tr')
-
 
 def get_age_in_hours(age: str) -> int:
     """Parses age and returns value in hours. 
@@ -35,7 +29,6 @@ def format_url(link: str) -> str:
         return f"https://news.ycombinator.com/{link}"
     return link
 
-
 def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
     first_row = rows[index * 3]
 
@@ -52,14 +45,27 @@ def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
     age_in_hours = get_age_in_hours(age)
         
     return Post(title, url, score, age_in_hours)
+
+def print_posts(posts: 'list[Post]'):
+    print(*posts, sep="\n")
+
+def main():
+    page = requests.get(URL)
+
+    soup = BeautifulSoup(page.content, "html.parser")
+    table = soup.find_all('table')[2]
+    rows = table.find_all('tr')
     
-posts = [parse_post(rows, i) for i in range(NUM_NEWS_PER_PAGE)]
-posts_without_score = list(filter(lambda p: p.score == -1, posts))
-posts.sort(key=Post.get_normalized_score, reverse= True)
+    posts = [parse_post(rows, i) for i in range(NUM_NEWS_PER_PAGE)]
+    posts_without_score = list(filter(lambda p: p.score == -1, posts))
+    posts.sort(key=Post.get_normalized_score, reverse= True)
 
-if len(posts_without_score):
-    print("Posts without score:")
-    print(*posts_without_score, sep="\n")
-    print("\nPosts with score:")
+    if len(posts_without_score):
+        print("Posts without score:")
+        print_posts(posts_without_score)
+        print("\nPosts with score:")
 
-print(*posts[:10], sep="\n")
+    print_posts(posts[:10])
+
+if __name__ == "__main__":
+    main()
