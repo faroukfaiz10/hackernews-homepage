@@ -16,11 +16,13 @@ def get_age_in_hours(age: str) -> int:
     """
     time_unit = age.split(" ")[1]
     if time_unit == "minutes":
-        return 1
+        return 0
     if time_unit == "hour":
-        return 2
+        return 1
     if time_unit == "hours":
-        return int(age.split(" ")[0]) + 1
+        return int(age.split(" ")[0])
+    if time_unit == "day":
+        return 24
     raise ValueError(f"Unsupported time_unit in age: {age}")
 
 def format_url(link: str) -> str:

@@ -6,7 +6,7 @@ class Post:
         self.age_in_hours = age_in_hours
 
     def get_normalized_score(self) -> int:
-        return int(self.score / self.age_in_hours)
+        return int(self.score / (self.age_in_hours + 1))
 
     def __str__(self) -> str:
         if self.score == -1:
