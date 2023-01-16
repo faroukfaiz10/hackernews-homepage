@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from post import Post
 from typing import Any
 
+NUM_PAGES_FETCHED = 3
 URL_PREFIX = "https://news.ycombinator.com/news?p="
 NUM_NEWS_PER_PAGE = 30
 
@@ -60,18 +61,30 @@ def fetch_page_posts(page_index: int) -> 'list[Post]':
     
     return [parse_post(rows, i) for i in range(NUM_NEWS_PER_PAGE)]
 
+def fetch_pages_posts(max_page_index: int) -> 'list[Post]':
+    posts = [fetch_page_posts(i) for i in range(1, max_page_index + 1)]
+    flattened_posts = []
+    for page_posts in posts:
+        flattened_posts.extend(page_posts)
+
+    return flattened_posts
+
 def main():
-    posts = [fetch_page_posts(i) for i in [1, 2, 3]]
-    flattened_posts = [post for page_posts in posts for post in page_posts]
-    posts_without_score = list(filter(lambda p: p.score == -1, flattened_posts))
-    flattened_posts.sort(key=Post.get_normalized_score, reverse= True)
+    posts = fetch_pages_posts(NUM_PAGES_FETCHED)
+
+    posts_without_score = list(filter(lambda p: p.score == -1, posts))
+    posts_sorted_by_norm_score = sorted(posts, key=Post.get_normalized_score, reverse= True)
+    posts_sorted_by_score = sorted(posts, key=lambda p: p.score, reverse= True)
 
     if len(posts_without_score):
         print("Posts without score:")
         print_posts(posts_without_score)
-        print("\nPosts with score:")
+        
+    print("\nTop posts by normalized score:")
+    print_posts(posts_sorted_by_norm_score[:10])
 
-    print_posts(flattened_posts[:10])
+    print("\nTop posts by score:")
+    print_posts(posts_sorted_by_score[:10])
 
 if __name__ == "__main__":
     main()
