@@ -15,15 +15,14 @@ def get_age_in_hours(age: str) -> int:
         - 2 hours ago
         - 12 minutes ago
     """
+    value = int(age.split(" ")[0])
     time_unit = age.split(" ")[1]
     if time_unit == "minutes":
         return 0
-    if time_unit == "hour":
-        return 1
-    if time_unit == "hours":
-        return int(age.split(" ")[0])
-    if time_unit == "day":
-        return 24
+    if time_unit.startswith("hour"):
+        return value
+    if time_unit.startswith("day"):
+        return value * 24
     raise ValueError(f"Unsupported time_unit in age: {age}")
 
 def format_url(link: str) -> str:
