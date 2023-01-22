@@ -51,7 +51,7 @@ def parse_second_row(row: Any) -> Tuple[int, int, str]:
 def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
     (title, post_url) = parse_first_row(rows[index * 3])
     (score, age_in_hours, comments_url) = parse_second_row(rows[index * 3 + 1])
-    return Post(title, post_url, score, age_in_hours, comments_url)
+    return Post(title, post_url, comments_url, score, age_in_hours)
 
 def print_posts(posts: 'list[Post]'):
     print(*posts, sep="\n")
