@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from post import Post
-from typing import Any
+from typing import Any, Tuple
 
 NUM_PAGES_FETCHED = 3
 URL_PREFIX = "https://news.ycombinator.com/news?p="
@@ -31,25 +31,27 @@ def format_url(link: str) -> str:
         return f"https://news.ycombinator.com/{link}"
     return link
 
-def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
-    first_row = rows[index * 3]
-
-    link = first_row.find_all('td')[2].a
+def parse_first_row(row: Any) -> Tuple[str, str]:
+    link = row.find_all('td')[2].a
     title = link.text
-    url = format_url(link['href'])
+    post_url = format_url(link['href'])
+    return (title, post_url)
 
-    second_row = rows[index * 3 + 1]
-
-    score_span = second_row.find('span', class_='score')
+def parse_second_row(row: Any) -> Tuple[int, int, str]:
+    score_span = row.find('span', class_='score')
     score = int(score_span.text.split(" ")[0]) if score_span else -1
 
-    age = second_row.find('span', class_='age').a.text
+    age = row.find('span', class_='age').a.text
     age_in_hours = get_age_in_hours(age)
 
-    links = second_row.find_all('a')
+    links = row.find_all('a')
     comments_url = format_url(links[3]['href']) if len(links) == 4 else ""
-        
-    return Post(title, url, score, age_in_hours, comments_url)
+    return (score, age_in_hours, comments_url)
+
+def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
+    (title, post_url) = parse_first_row(rows[index * 3])
+    (score, age_in_hours, comments_url) = parse_second_row(rows[index * 3 + 1])
+    return Post(title, post_url, score, age_in_hours, comments_url)
 
 def print_posts(posts: 'list[Post]'):
     print(*posts, sep="\n")
