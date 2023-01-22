@@ -34,8 +34,8 @@ def format_url(link: str) -> str:
 def parse_first_row(row: Any) -> Tuple[str, str]:
     link = row.find_all('td')[2].a
     title = link.text
-    post_url = format_url(link['href'])
-    return (title, post_url)
+    external_url = format_url(link['href'])
+    return (title, external_url)
 
 def parse_second_row(row: Any) -> Tuple[int, int, str]:
     score_span = row.find('span', class_='score')
@@ -49,9 +49,9 @@ def parse_second_row(row: Any) -> Tuple[int, int, str]:
     return (score, age_in_hours, comments_url)
 
 def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
-    (title, post_url) = parse_first_row(rows[index * 3])
+    (title, external_url) = parse_first_row(rows[index * 3])
     (score, age_in_hours, comments_url) = parse_second_row(rows[index * 3 + 1])
-    return Post(title, post_url, comments_url, score, age_in_hours)
+    return Post(title, external_url, comments_url, score, age_in_hours)
 
 def print_posts(posts: 'list[Post]'):
     print(*posts, sep="\n")

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 @dataclass
 class Post:
     title: str
-    url: str
+    external_url: str
     comments_url: str
     score: int
     age_in_hours: int
@@ -13,7 +13,7 @@ class Post:
 
     def __str__(self) -> str:
         if self.score == -1:
-            return f"NOT_SCORED - {self.title} - {self.url}"
+            return f"NOT_SCORED - {self.title} - {self.external_url}"
         normalized_score = self.get_normalized_score()
-        base = f"{normalized_score} - {self.score} - {self.title} - {self.url}"
+        base = f"{normalized_score} - {self.score} - {self.title} - {self.external_url}"
         return f"{base} - {self.comments_url}" if self.comments_url != ""  else base
