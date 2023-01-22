@@ -45,8 +45,11 @@ def parse_post(rows: Any, index: int) -> Post: # TODO: Better typing for rows ?
 
     age = second_row.find('span', class_='age').a.text
     age_in_hours = get_age_in_hours(age)
+
+    links = second_row.find_all('a')
+    comments_url = format_url(links[3]['href']) if len(links) == 4 else ""
         
-    return Post(title, url, score, age_in_hours)
+    return Post(title, url, score, age_in_hours, comments_url)
 
 def print_posts(posts: 'list[Post]'):
     print(*posts, sep="\n")
